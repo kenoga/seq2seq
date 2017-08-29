@@ -4,7 +4,6 @@ import os, sys
 import time
 import json
 import argparse
-import numpy as np
 import chainer
 from chainer import optimizers, links, optimizer, serializers
 from seq2seq import Seq2Seq
@@ -26,18 +25,21 @@ def train(args):
     model = Seq2Seq(vocab_size=vocab_size,
                     embed_size=EMBED_SIZE,
                     hidden_size=HIDDEN_SIZE,
-                    flag_gpu=args.gpu)
+                    flag_gpu=args.use_gpu)
     
     # モデルの初期化
     # model.reset()
+    
     # GPUを使うかどうか決める
-    if args.gpu:
+    # set gpu or not
+    if args.use_gpu:
         from chainer import cuda
         ARR = cuda.cupy
         # モデルをGPUのメモリに入れる
-        cuda.get_device(0).use()
-        model.to_gpu(0)
+        cuda.get_device(args.gpu_id).use()
+        model.to_gpu(args.gpu_id)
     else:
+        import numpy as np
         ARR = np
         
     # load dataset
@@ -46,7 +48,7 @@ def train(args):
     dev_dataset = dataset["dev"]
     train_x_list, train_y_list = utils.make_dataset(train_dataset)
     dev_x_list, dev_y_list = utils.make_dataset(dev_dataset)
-    dev_x_batches, dev_y_batches = utils.make_minibatch(dev_x_list, dev_y_list, BATCH_SIZE, vocab, ARR, random=False)
+    dev_x_batches, dev_y_batches = utils.make_minibatch(dev_x_list, dev_y_list, BATCH_SIZE, vocab, use_gpu=args.use_gpu, gpu_id=args.gpu_id, random=False)
     dev_batch_num = len(dev_x_batches)
     
 
@@ -59,7 +61,9 @@ def train(args):
         opt.setup(model)
         opt.add_hook(optimizer.GradientClipping(5))
         
-        train_x_batches, train_y_batches = utils.make_minibatch(train_x_list, train_y_list, BATCH_SIZE, vocab, ARR, random=True)
+        train_x_batches, train_y_batches = utils.make_minibatch(train_x_list, train_y_list, BATCH_SIZE, vocab, use_gpu=args.use_gpu, gpu_id=args.gpu_id, random=True)
+        
+        
         train_batch_num = len(train_x_batches)
         
         train_loss_sum = 0
@@ -97,11 +101,11 @@ def train(args):
         # devのlossを計算してチェックできるようにする
         # 
 parser = argparse.ArgumentParser()
-parser.add_argument("--gpu", "-g", type=bool, default=False)
+parser.add_argument("--use-gpu", action="store_true")
+parser.add_argument("--gpu-id", type=int, default=0)
 parser.add_argument("--batch", type=int, default=128)
 parser.add_argument("--epoch", type=int, default=20)
 parser.add_argument("--emb-size", type=int, default=256)
 parser.add_argument("--hid-size", type=int, default=256)
 args = parser.parse_args()
-
 train(args)

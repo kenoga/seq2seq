@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*- 
 
 import json
+import numpy as np
 
 def load_dataset(path):
     with open(path, "r") as f:
@@ -40,7 +41,7 @@ def get_list_by_idxs(l, idxs):
     '''
     return [l[i] for i in idxs]
 
-def uniform_batch_length(batch, ARR):
+def uniform_batch_length(batch):
     '''
     batch内のlistの長さを揃える
     '''
@@ -49,7 +50,7 @@ def uniform_batch_length(batch, ARR):
         batch[i] = x + [-1] * (max_len - len(x))
     return batch
     
-def make_minibatch(x_list, y_list, batch_size, vocab, ARR, random=True):
+def make_minibatch(x_list, y_list, batch_size, vocab, use_gpu=False, gpu_id=0, random=True):
     '''
     学習データのミニバッチを作成する関数
     ランダムでミニバッチに分割して，ミニバッチ内のデータのサイズをミニバッチ内の最大長に合わせる
@@ -64,7 +65,7 @@ def make_minibatch(x_list, y_list, batch_size, vocab, ARR, random=True):
     N = len(x_list)
     
     if random:
-        perm = ARR.random.permutation(N)
+        perm = np.random.permutation(N)
     x_batches = []
     y_batches = []
     
@@ -79,9 +80,16 @@ def make_minibatch(x_list, y_list, batch_size, vocab, ARR, random=True):
         else:
             x_batch = x_list[i:i+batch_size]
             y_batch = y_list[i:i+batch_size]
-        uniformed_x_batch = uniform_batch_length(x_batch, ARR)
-        uniformed_y_batch = uniform_batch_length(y_batch, ARR)
-        x_batches.append(ARR.array(uniformed_x_batch, dtype=ARR.int32).T)
-        y_batches.append(ARR.array(uniformed_y_batch, dtype=ARR.int32).T)
-    
+        uniformed_x_batch = uniform_batch_length(x_batch)
+        uniformed_y_batch = uniform_batch_length(y_batch)
+        x_batches.append(np.array(uniformed_x_batch, dtype=np.int32).T)
+        y_batches.append(np.array(uniformed_y_batch, dtype=np.int32).T)
+    if use_gpu:
+        from chainer import cuda
+        x_batches_gpu = []
+        y_batches_gpu = []
+        for x, y in zip(x_batches, y_batches):
+            x_batches_gpu.append(cuda.to_gpu(x, gpu_id))
+            y_batches_gpu.append(cuda.to_gpu(y, gpu_id))
+        return x_batches_gpu, y_batches_gpu
     return x_batches, y_batches

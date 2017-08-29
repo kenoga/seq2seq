@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
 
-import numpy as np
 from chainer import Chain, Variable, functions
 from lstm_encoder import LSTM_Encoder
 from lstm_decoder import LSTM_Decoder
@@ -26,6 +25,7 @@ class Seq2Seq(Chain):
             from chainer import cuda
             self.ARR = cuda.cupy
         else:
+            import numpy as np
             self.ARR = np
 
     def encode(self, words, batch_size):
