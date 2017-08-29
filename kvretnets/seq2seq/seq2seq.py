@@ -6,7 +6,7 @@ from lstm_encoder import LSTM_Encoder
 from lstm_decoder import LSTM_Decoder
 
 class Seq2Seq(Chain):
-    def __init__(self, vocab_size, embed_size, hidden_size, flag_gpu=True):
+    def __init__(self, vocab_size, embed_size, hidden_size, flag_gpu=False):
         """
         Initialize model
         :param vocab_size
