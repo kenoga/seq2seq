@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
-DATASET_PATH = "/Users/nogaken/GoogleDrive/Lab/work/kvretnets/dataset/dataset.json"
-VOCAB_PATH = "/Users/nogaken/GoogleDrive/Lab/work/kvretnets/dataset/vocab.json"
+import os
 
-PREPROCESSED_DATASET_PATH = "./dataset_preprocessed/preprocessed_data.json"
+BASE_PATH = "./"
+DATASET_PATH = os.path.join(BASE_PATH, "dataset/dataset.json")
+VOCAB_PATH = os.path.join(BASE_PATH, "dataset/vocab.json")
 
-TASK_NAMES = ["schedule"]
-# 今回扱う対象はscheduleタスクのみ
+TASK_NAMES = ["schedule", "navigate", "weather"]
+# 対象
 TASK_NAME = "schedule"
 
 DATA_TYPES = ["train", "dev", "test"]
-
 DATA_0_BASE_PATH = "./kvret_dataset_public/"
 DATA_1_BASE_PATH = "./dataset_split/tasks/%s" % TASK_NAME
