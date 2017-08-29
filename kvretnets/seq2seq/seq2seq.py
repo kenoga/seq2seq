@@ -23,6 +23,7 @@ class Seq2Seq(Chain):
         self.hidden_size = hidden_size
 
         if flag_gpu:
+            import cuda
             self.ARR = cuda.cupy
         else:
             self.ARR = np
