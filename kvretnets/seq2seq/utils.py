@@ -50,7 +50,7 @@ def uniform_batch_length(batch):
         batch[i] = x + [-1] * (max_len - len(x))
     return batch
     
-def make_minibatch(x_list, y_list, batch_size, vocab, random=True):
+def make_minibatch(x_list, y_list, batch_size, vocab, ARR, random=True):
     '''
     学習データのミニバッチを作成する関数
     ランダムでミニバッチに分割して，ミニバッチ内のデータのサイズをミニバッチ内の最大長に合わせる

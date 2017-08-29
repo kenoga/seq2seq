@@ -46,7 +46,7 @@ def train(args):
     dev_dataset = dataset["dev"]
     train_x_list, train_y_list = utils.make_dataset(train_dataset)
     dev_x_list, dev_y_list = utils.make_dataset(dev_dataset)
-    dev_x_batches, dev_y_batches = utils.make_minibatch(dev_x_list, dev_y_list, BATCH_SIZE, vocab, random=False)
+    dev_x_batches, dev_y_batches = utils.make_minibatch(dev_x_list, dev_y_list, BATCH_SIZE, vocab, ARR, random=False)
     dev_batch_num = len(dev_x_batches)
     
 
@@ -59,7 +59,7 @@ def train(args):
         opt.setup(model)
         opt.add_hook(optimizer.GradientClipping(5))
         
-        train_x_batches, train_y_batches = utils.make_minibatch(train_x_list, train_y_list, BATCH_SIZE, vocab, BATCH_SIZE)
+        train_x_batches, train_y_batches = utils.make_minibatch(train_x_list, train_y_list, BATCH_SIZE, vocab, ARR, random=True)
         train_batch_num = len(train_x_batches)
         
         train_loss_sum = 0
