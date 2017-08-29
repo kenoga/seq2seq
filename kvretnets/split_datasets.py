@@ -4,7 +4,6 @@ from prettyprint import pp
 import json
 
 types = ["train", "dev", "test"]
-
 tasks = ["schedule", "navigate", "weather"]
 
 for typ in types:
@@ -47,12 +46,3 @@ for typ in types:
     for task in data.keys():
         with open("dataset_split/tasks/%s/%s.json" % (task, typ), "w") as f:
             json.dump(data[task][typ], f, ensure_ascii=False, indent=4)
-    
-    
-    # with open("formalized_data/%s.json" % typ, "w") as f:
-        # json.dump(data, f, ensure_ascii=False, indent=4)
-
-    # pp(data)
-
-        
-    
