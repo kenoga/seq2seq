@@ -32,7 +32,7 @@ def train(args):
     # model.reset()
     # GPUを使うかどうか決める
     if FLAG_GPU:
-        import cuda
+        from chainer import cuda
         ARR = cuda.cupy
         # モデルをGPUのメモリに入れる
         cuda.get_device(0).use()
