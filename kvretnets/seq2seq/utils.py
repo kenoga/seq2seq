@@ -44,7 +44,7 @@ def uniform_batch_length(batch, ARR):
     '''
     batch内のlistの長さを揃える
     '''
-    max_len = ARR.max([len(x) for x in batch])
+    max_len = max([len(x) for x in batch])
     for i, x in enumerate(batch):
         batch[i] = x + [-1] * (max_len - len(x))
     return batch
