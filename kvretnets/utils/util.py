@@ -31,14 +31,4 @@ def get_utterance_by_phrase(phrase, data):
                 if phrase in utterance[0]:
                     return utterance[0], dial
     return None, None, None
-    
-get_utterance_by_phrase(".tomorrow", data)
 
-    
-data = load_datasets()
-
-id = 562
-utterance, word, dial = get_utterance_by_vocab_id(id, data)
-print(str(id)+": "+word)
-print(utterance)
-pp(dial)
