@@ -3,6 +3,7 @@
 import os, sys
 import time
 import json
+import argparse
 import numpy as np
 import chainer
 from chainer import optimizers, links, optimizer, serializers
@@ -14,23 +15,24 @@ VOCAB_PATH = "../dataset/vocab.json"
 MODEL_SAVE_PATH = "./model/seq2seq_epoch%02d.model"
 EMBED_SIZE = 200
 HIDDEN_SIZE = 200
-BATCH_SIZE = 32
-FLAG_GPU = False
+BATCH_SIZE = 128
 EPOCH_NUM = 20
 
 
-def train():
+def train(args):
     vocab = utils.load_vocab(VOCAB_PATH)
     vocab_size = len(vocab)
     
     model = Seq2Seq(vocab_size=vocab_size,
                     embed_size=EMBED_SIZE,
                     hidden_size=HIDDEN_SIZE,
-                    flag_gpu=FLAG_GPU)
+                    flag_gpu=args.gpu)
+    
     # モデルの初期化
     # model.reset()
     # GPUを使うかどうか決める
     if FLAG_GPU:
+        import cuda
         ARR = cuda.cupy
         # モデルをGPUのメモリに入れる
         cuda.get_device(0).use()
@@ -94,5 +96,12 @@ def train():
         # if train==Falseのときの処理
         # devのlossを計算してチェックできるようにする
         # 
-        
-train()
+parser = argparse.ArgumentParser()
+parser.add_argument("--gpu", "-g", type=bool, default=False)
+parser.add_argument("--batch", type=int, default=128)
+parser.add_argument("--epoch", type=int, default=20)
+parser.add_argument("--emb-size", type=int, default=256)
+parser.add_argument("--hid-size", type=int, default=256)
+args = parser.parse_args()
+
+train(args)
