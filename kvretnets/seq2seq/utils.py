@@ -1,7 +1,6 @@
 # -*- encoding: utf-8 -*- 
 
 import json
-import numpy as np
 
 def load_dataset(path):
     with open(path, "r") as f:
@@ -41,11 +40,11 @@ def get_list_by_idxs(l, idxs):
     '''
     return [l[i] for i in idxs]
 
-def uniform_batch_length(batch):
+def uniform_batch_length(batch, ARR):
     '''
     batch内のlistの長さを揃える
     '''
-    max_len = np.max([len(x) for x in batch])
+    max_len = ARR.max([len(x) for x in batch])
     for i, x in enumerate(batch):
         batch[i] = x + [-1] * (max_len - len(x))
     return batch
@@ -65,7 +64,7 @@ def make_minibatch(x_list, y_list, batch_size, vocab, ARR, random=True):
     N = len(x_list)
     
     if random:
-        perm = np.random.permutation(N)
+        perm = ARR.random.permutation(N)
     x_batches = []
     y_batches = []
     
@@ -80,9 +79,9 @@ def make_minibatch(x_list, y_list, batch_size, vocab, ARR, random=True):
         else:
             x_batch = x_list[i:i+batch_size]
             y_batch = y_list[i:i+batch_size]
-        uniformed_x_batch = uniform_batch_length(x_batch)
-        uniformed_y_batch = uniform_batch_length(y_batch)
-        x_batches.append(np.array(uniformed_x_batch, dtype=np.int32).T)
-        y_batches.append(np.array(uniformed_y_batch, dtype=np.int32).T)
+        uniformed_x_batch = uniform_batch_length(x_batch, ARR)
+        uniformed_y_batch = uniform_batch_length(y_batch, ARR)
+        x_batches.append(ARR.array(uniformed_x_batch, dtype=ARR.int32).T)
+        y_batches.append(ARR.array(uniformed_y_batch, dtype=ARR.int32).T)
     
     return x_batches, y_batches
