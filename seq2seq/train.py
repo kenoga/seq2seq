@@ -27,15 +27,10 @@ def train(args):
                     hidden_size=HIDDEN_SIZE,
                     flag_gpu=args.use_gpu)
     
-    # モデルの初期化
-    # model.reset()
-    
-    # GPUを使うかどうか決める
     # set gpu or not
     if args.use_gpu:
         from chainer import cuda
         ARR = cuda.cupy
-        # モデルをGPUのメモリに入れる
         cuda.get_device(args.gpu_id).use()
         model.to_gpu(args.gpu_id)
     else:
@@ -55,7 +50,6 @@ def train(args):
     # start training
     start_time = time.time()
     for epoch_i in range(EPOCH_NUM):
-        # エポックごとにoptimizerの初期化
         # initializing a optimizer in each epoch
         opt = optimizers.Adam()
         opt.setup(model)
@@ -81,8 +75,6 @@ def train(args):
             # update the network
             opt.update()
 
-            # 記録された勾配を初期化する
-            # opt.cleargrads()
         
         dev_loss_sum = 0
         for batch_i in range(dev_batch_num):
@@ -96,10 +88,7 @@ def train(args):
         print("EPOCH: %2d/%2d, TRAIN LOSS: %0.1f, DEV LOSS: %0.1f" % (epoch_i+1, EPOCH_NUM, train_loss_sum, dev_loss_sum))
         serializers.save_hdf5(MODEL_SAVE_PATH % epoch_i, model)
         
-        # TODO:
-        # if train==Falseのときの処理
-        # devのlossを計算してチェックできるようにする
-        # 
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--use-gpu", action="store_true")
 parser.add_argument("--gpu-id", type=int, default=0)
